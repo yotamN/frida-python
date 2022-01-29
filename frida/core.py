@@ -51,7 +51,7 @@ class IOStream:
     Frida's own implementation of an input/output stream
     """
 
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.IOStream):
         self._impl = impl
 
     def __repr__(self) -> str:
@@ -107,7 +107,7 @@ class IOStream:
 
 
 class PortalMembership:
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.PortalMembership):
         self._impl = impl
 
     @cancellable
@@ -145,15 +145,15 @@ class ScriptExports:
 class Script:
     exports: ScriptExports
 
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.Script):
         self.exports = ScriptExports(self)
 
         self._impl = impl
 
-        self._on_message_callbacks = []
-        self._log_handler = self.default_log_handler
+        self._on_message_callbacks: List[Callable] = []
+        self._log_handler: Callable[[str, str], None] = self.default_log_handler
 
-        self._pending = {}
+        self._pending: Dict[int, Callable] = {}
         self._next_request_id = 1
         self._cond = threading.Condition()
 
@@ -364,7 +364,7 @@ class Script:
 
 
 class Session:
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.Session):
         self._impl = impl
 
     def __repr__(self) -> str:
@@ -488,9 +488,9 @@ class Session:
 
 
 class Bus:
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.Bus):
         self._impl = impl
-        self._on_message_callbacks = []
+        self._on_message_callbacks: List[Callable] = []
 
         impl.on("message", self._on_message)
 
@@ -799,7 +799,7 @@ class Device:
 
 
 class DeviceManager:
-    def __init__(self, impl):
+    def __init__(self, impl: _frida.DeviceManager):
         self._impl = impl
 
     def __repr__(self) -> str:
@@ -1221,7 +1221,7 @@ class Cancellable:
         return CancellablePollFD(self._impl)
 
     @classmethod
-    def get_current(cls) -> "Cancellable":
+    def get_current(cls) -> _frida.Cancellable:
         """
         Get the top cancellable from the stack.
         """

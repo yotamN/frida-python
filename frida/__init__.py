@@ -171,4 +171,8 @@ def enumerate_devices() -> List[core.Device]:
 
 @core.cancellable
 def shutdown():
+    """
+    Shutdown the main device manager.
+    """
+
     get_device_manager()._impl.close()
