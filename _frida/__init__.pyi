@@ -17,12 +17,13 @@ class OperationCancelledError(Exception): ...
 class PermissionDeniedError(Exception): ...
 
 class Object:
-    def on(self, signal: str, callback: Callable):
+    def __init__(self, *args, **kwargs) -> None: ...
+    def on(self, signal: str, callback: Callable[..., Any]):
         """
         Add a signal handler.
         """
         ...
-    def off(self, signal: str, callback: Callable):
+    def off(self, signal: str, callback: Callable[..., Any]):
         """
         Remove a signal handler.
         """

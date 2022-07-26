@@ -58,7 +58,7 @@ def spawn(
     cwd: Optional[str] = None,
     stdio: Optional[str] = None,
     **kwargs,
-):
+) -> int:
     """
     Spawn a process into an attachable state.
     """
@@ -66,7 +66,7 @@ def spawn(
     return get_local_device().spawn(program=program, argv=argv, envp=envp, env=env, cwd=cwd, stdio=stdio, **kwargs)
 
 
-def resume(target: core.ProcessTarget):
+def resume(target: core.ProcessTarget) -> None:
     """
     Resume a process from the attachable state.
 
@@ -76,7 +76,7 @@ def resume(target: core.ProcessTarget):
     get_local_device().resume(target)
 
 
-def kill(target: core.ProcessTarget):
+def kill(target: core.ProcessTarget) -> None:
     """
     Kill a process.
 
@@ -150,7 +150,7 @@ def get_device(id: Optional[str], timeout: int = 0) -> core.Device:
     return get_device_manager().get_device(id, timeout)
 
 
-def get_device_matching(predicate: Callable[[core.Device], bool], timeout: int = 0):
+def get_device_matching(predicate: Callable[[core.Device], bool], timeout: int = 0) -> core.Device:
     """
     Get device matching predicate.
 
@@ -170,7 +170,7 @@ def enumerate_devices() -> List[core.Device]:
 
 
 @core.cancellable
-def shutdown():
+def shutdown() -> None:
     """
     Shutdown the main device manager.
     """
