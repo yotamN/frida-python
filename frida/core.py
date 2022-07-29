@@ -63,7 +63,7 @@ class IOStream:
     @property
     def is_closed(self) -> bool:
         """
-        Query whether the stream is closed.
+        Query whether the stream is closed
         """
 
         return self._impl.is_closed()
@@ -79,7 +79,7 @@ class IOStream:
     @cancellable
     def read(self, count: int) -> bytes:
         """
-        Read up to the specified number of bytes from the stream.
+        Read up to the specified number of bytes from the stream
         """
 
         return self._impl.read(count)
@@ -87,7 +87,7 @@ class IOStream:
     @cancellable
     def read_all(self, count: int) -> bytes:
         """
-        Read exactly the specified number of bytes from the stream.
+        Read exactly the specified number of bytes from the stream
         """
 
         return self._impl.read_all(count)
@@ -95,7 +95,7 @@ class IOStream:
     @cancellable
     def write(self, data: bytes) -> int:
         """
-        Write as much as possible of the provided data to the stream.
+        Write as much as possible of the provided data to the stream
         """
 
         return self._impl.write(data)
@@ -103,7 +103,7 @@ class IOStream:
     @cancellable
     def write_all(self, data: bytes) -> None:
         """
-        Write all of the provided data to the stream.
+        Write all of the provided data to the stream
         """
 
         self._impl.write_all(data)
@@ -116,7 +116,7 @@ class PortalMembership:
     @cancellable
     def terminate(self) -> None:
         """
-        Terminate the membership.
+        Terminate the membership
         """
 
         self._impl.terminate()
@@ -169,7 +169,7 @@ class Script:
     @property
     def is_destroyed(self) -> bool:
         """
-        Query whether the script has been destroyed.
+        Query whether the script has been destroyed
         """
 
         return self._impl.is_destroyed()
@@ -185,7 +185,7 @@ class Script:
     @cancellable
     def unload(self) -> None:
         """
-        Unload the script.
+        Unload the script
         """
 
         self._impl.unload()
@@ -193,14 +193,14 @@ class Script:
     @cancellable
     def eternalize(self) -> None:
         """
-        Eternalize the script.
+        Eternalize the script
         """
 
         self._impl.eternalize()
 
     def post(self, message: Any, data: Optional[str] = None) -> None:
         """
-        Post a JSON-encoded message to the script.
+        Post a JSON-encoded message to the script
         """
 
         raw_message = json.dumps(message)
@@ -218,7 +218,7 @@ class Script:
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         if signal == "message":
@@ -228,7 +228,7 @@ class Script:
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         if signal == "message":
@@ -246,7 +246,6 @@ class Script:
     def set_log_handler(self, handler: Callable[[str, str], None]) -> None:
         """
         Set the method that handles the script logs
-
         :param handler: a callable that accepts two parameters:
                         1. the log level name
                         2. the log message
@@ -315,7 +314,7 @@ class Script:
 
         return result[1]
 
-    def _on_rpc_message(self, request_id:int, operation:str, params, data) -> None:
+    def _on_rpc_message(self, request_id: int, operation: str, params, data) -> None:
         if operation in ("ok", "error"):
             callback = self._pending.pop(request_id, None)
             if callback is None:
@@ -376,7 +375,7 @@ class Session:
     @property
     def is_detached(self) -> bool:
         """
-        Query whether the session is detached.
+        Query whether the session is detached
         """
 
         return self._impl.is_detached()
@@ -384,7 +383,7 @@ class Session:
     @cancellable
     def detach(self) -> None:
         """
-        Detach session from the process.
+        Detach session from the process
         """
 
         self._impl.detach()
@@ -392,7 +391,7 @@ class Session:
     @cancellable
     def resume(self) -> None:
         """
-        Resume session after network error.
+        Resume session after network error
         """
 
         self._impl.resume()
@@ -400,7 +399,7 @@ class Session:
     @cancellable
     def enable_child_gating(self) -> None:
         """
-        Enable child gating.
+        Enable child gating
         """
 
         self._impl.enable_child_gating()
@@ -408,7 +407,7 @@ class Session:
     @cancellable
     def disable_child_gating(self) -> None:
         """
-        Disable child gating.
+        Disable child gating
         """
 
         self._impl.disable_child_gating()
@@ -416,7 +415,7 @@ class Session:
     @cancellable
     def create_script(self, source: str, name: Optional[str] = None, runtime: Optional[str] = None) -> Script:
         """
-        Create a new script.
+        Create a new script
         """
 
         kwargs = {"name": name, "runtime": runtime}
@@ -428,7 +427,7 @@ class Session:
         self, data: bytes, name: Optional[str] = None, runtime: Optional[str] = None
     ) -> Script:
         """
-        Create a new script from bytecode.
+        Create a new script from bytecode
         """
 
         kwargs = {"name": name, "runtime": runtime}
@@ -438,7 +437,7 @@ class Session:
     @cancellable
     def compile_script(self, source: str, name: Optional[str] = None, runtime: Optional[str] = None) -> bytes:
         """
-        Compile script source code to bytecode.
+        Compile script source code to bytecode
         """
 
         kwargs = {"name": name, "runtime": runtime}
@@ -452,7 +451,7 @@ class Session:
     @cancellable
     def enable_debugger(self, port: int) -> None:
         """
-        Enable the Node.js compatible script debugger.
+        Enable the Node.js compatible script debugger
         """
 
         kwargs = {"port": port}
@@ -462,7 +461,7 @@ class Session:
     @cancellable
     def disable_debugger(self) -> None:
         """
-        Disable the Node.js compatible script debugger.
+        Disable the Node.js compatible script debugger
         """
 
         self._impl.disable_debugger()
@@ -472,7 +471,7 @@ class Session:
         self, stun_server: Optional[str] = None, relays: Optional[Sequence[_frida.Relay]] = None
     ) -> None:
         """
-        Set up a peer connection with the target process.
+        Set up a peer connection with the target process
         """
 
         kwargs = {"stun_server": stun_server, "relays": relays}
@@ -488,7 +487,7 @@ class Session:
         acl: Union[None, List[str], Tuple[str]] = None,
     ) -> PortalMembership:
         """
-        Join a portal.
+        Join a portal
         """
 
         kwargs: Dict[str, Any] = {"certificate": certificate, "token": token, "acl": acl}
@@ -497,14 +496,14 @@ class Session:
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         self._impl.on(signal, callback)
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         self._impl.off(signal, callback)
@@ -520,14 +519,14 @@ class Bus:
     @cancellable
     def attach(self) -> None:
         """
-        Attach to the bus.
+        Attach to the bus
         """
 
         self._impl.attach()
 
     def post(self, message: Any, data: Optional[Union[str, bytes]] = None) -> None:
         """
-        Post a JSON-encoded message to the bus.
+        Post a JSON-encoded message to the bus
         """
 
         raw_message = json.dumps(message)
@@ -537,7 +536,7 @@ class Bus:
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         if signal == "message":
@@ -547,7 +546,7 @@ class Bus:
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         if signal == "message":
@@ -591,7 +590,7 @@ class Device:
     @property
     def is_lost(self) -> bool:
         """
-        Query whether the device has been lost.
+        Query whether the device has been lost
         """
 
         return self._impl.is_lost()
@@ -599,7 +598,7 @@ class Device:
     @cancellable
     def query_system_parameters(self) -> Dict[str, Any]:
         """
-        Returns a dictionary of information about the host system.
+        Returns a dictionary of information about the host system
         """
 
         return self._impl.query_system_parameters()
@@ -607,7 +606,7 @@ class Device:
     @cancellable
     def get_frontmost_application(self, scope: Optional[str] = None) -> Optional[_frida.Application]:
         """
-        Get details about the frontmost application.
+        Get details about the frontmost application
         """
 
         kwargs = {"scope": scope}
@@ -619,7 +618,7 @@ class Device:
         self, identifiers: Optional[Sequence[str]] = None, scope: Optional[str] = None
     ) -> List[_frida.Application]:
         """
-        Enumerate applications.
+        Enumerate applications
         """
 
         kwargs = {"identifiers": identifiers, "scope": scope}
@@ -631,7 +630,7 @@ class Device:
         self, pids: Optional[Sequence[int]] = None, scope: Optional[str] = None
     ) -> List[_frida.Process]:
         """
-        Enumerate processes.
+        Enumerate processes
         """
 
         kwargs = {"pids": pids, "scope": scope}
@@ -642,7 +641,6 @@ class Device:
     def get_process(self, process_name: str) -> _frida.Process:
         """
         Get the process with the given name
-
         :raises ProcessNotFoundError: if the process was not found or there were more than one process with the given name
         """
 
@@ -663,7 +661,7 @@ class Device:
     @cancellable
     def enable_spawn_gating(self) -> None:
         """
-        Enable spawn gating.
+        Enable spawn gating
         """
 
         self._impl.enable_spawn_gating()
@@ -671,7 +669,7 @@ class Device:
     @cancellable
     def disable_spawn_gating(self) -> None:
         """
-        Disable spawn gating.
+        Disable spawn gating
         """
 
         self._impl.disable_spawn_gating()
@@ -679,7 +677,7 @@ class Device:
     @cancellable
     def enumerate_pending_spawn(self) -> List[_frida.Spawn]:
         """
-        Enumerate pending spawn.
+        Enumerate pending spawn
         """
 
         return self._impl.enumerate_pending_spawn()
@@ -687,7 +685,7 @@ class Device:
     @cancellable
     def enumerate_pending_children(self) -> List[_frida.Child]:
         """
-        Enumerate pending children.
+        Enumerate pending children
         """
 
         return self._impl.enumerate_pending_children()
@@ -704,7 +702,7 @@ class Device:
         **kwargs,
     ) -> int:
         """
-        Spawn a process into an attachable state.
+        Spawn a process into an attachable state
         """
 
         if not isinstance(program, str):
@@ -720,9 +718,8 @@ class Device:
     @cancellable
     def input(self, target: ProcessTarget, data: bytes) -> None:
         """
-        Input data on stdin of a spawned process.
-
-        :params target: the PID or name of the process
+        Input data on stdin of a spawned process
+        :param target: the PID or name of the process
         """
 
         self._impl.input(self._pid_of(target), data)
@@ -730,9 +727,8 @@ class Device:
     @cancellable
     def resume(self, target: ProcessTarget) -> None:
         """
-        Resume a process from the attachable state.
-
-        :params target: the PID or name of the process
+        Resume a process from the attachable state
+        :param target: the PID or name of the process
         """
 
         self._impl.resume(self._pid_of(target))
@@ -740,11 +736,9 @@ class Device:
     @cancellable
     def kill(self, target: ProcessTarget) -> None:
         """
-        Kill a process.
-
-        :params target: the PID or name of the process
+        Kill a process
+        :param target: the PID or name of the process
         """
-
         self._impl.kill(self._pid_of(target))
 
     @cancellable
@@ -755,9 +749,8 @@ class Device:
         persist_timeout: Optional[int] = None,
     ) -> Session:
         """
-        Attach to a process.
-
-        :params target: the PID or name of the process
+        Attach to a process
+        :param target: the PID or name of the process
         """
 
         kwargs = {"realm": realm, "persist_timeout": persist_timeout}
@@ -767,9 +760,8 @@ class Device:
     @cancellable
     def inject_library_file(self, target: ProcessTarget, path: str, entrypoint: str, data: str) -> int:
         """
-        Inject a library file to a process.
-
-        :params target: the PID or name of the process
+        Inject a library file to a process
+        :param target: the PID or name of the process
         """
 
         return self._impl.inject_library_file(self._pid_of(target), path, entrypoint, data)
@@ -777,9 +769,8 @@ class Device:
     @cancellable
     def inject_library_blob(self, target: ProcessTarget, blob: bytes, entrypoint: str, data: str) -> int:
         """
-        Inject a library blob to a process.
-
-        :params target: the PID or name of the process
+        Inject a library blob to a process
+        :param target: the PID or name of the process
         """
 
         return self._impl.inject_library_blob(self._pid_of(target), blob, entrypoint, data)
@@ -787,7 +778,7 @@ class Device:
     @cancellable
     def open_channel(self, address: str) -> IOStream:
         """
-        Open a device-specific communication channel.
+        Open a device-specific communication channel
         """
 
         return IOStream(self._impl.open_channel(address))
@@ -802,14 +793,14 @@ class Device:
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         self._impl.on(signal, callback)
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         self._impl.off(signal, callback)
@@ -859,10 +850,9 @@ class DeviceManager:
     @cancellable
     def get_device_matching(self, predicate: Callable[[Device], bool], timeout: int = 0) -> Device:
         """
-        Get device matching predicate.
-
-        :params predicate: a function to filter the devices
-        :params timeout: operation timeout in seconds
+        Get device matching predicate
+        :param predicate: a function to filter the devices
+        :param timeout: operation timeout in seconds
         """
 
         if timeout < 0:
@@ -876,7 +866,7 @@ class DeviceManager:
     @cancellable
     def enumerate_devices(self) -> List[Device]:
         """
-        Enumerate devices.
+        Enumerate devices
         """
 
         return [Device(device) for device in self._impl.enumerate_devices()]
@@ -891,7 +881,7 @@ class DeviceManager:
         keepalive_interval: Optional[int] = None,
     ) -> Device:
         """
-        Add a remote device.
+        Add a remote device
         """
 
         kwargs: Dict[str, Any] = {
@@ -906,21 +896,21 @@ class DeviceManager:
     @cancellable
     def remove_remote_device(self, address: str) -> None:
         """
-        Remove a remote device.
+        Remove a remote device
         """
 
         self._impl.remove_remote_device(address=address)
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         self._impl.on(signal, callback)
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         self._impl.off(signal, callback)
@@ -988,8 +978,7 @@ class PortalService:
     @cancellable
     def start(self) -> None:
         """
-        Start listening for incoming connections.
-
+        Start listening for incoming connections
         :raises InvalidOperationError: if the service isn't stopped
         :raises AddressInUseError: if the given address is already in use
         """
@@ -999,8 +988,7 @@ class PortalService:
     @cancellable
     def stop(self) -> None:
         """
-        Stop listening for incoming connections, and kick any connected clients.
-
+        Stop listening for incoming connections, and kick any connected clients
         :raises InvalidOperationError: if the service is already stopped
         """
 
@@ -1018,7 +1006,7 @@ class PortalService:
 
     def narrowcast(self, tag: str, message: Any, data: Optional[Union[str, bytes]] = None) -> None:
         """
-        Post a message to control channels with a specific tag.
+        Post a message to control channels with a specific tag
         """
 
         raw_message = json.dumps(message)
@@ -1028,7 +1016,7 @@ class PortalService:
 
     def broadcast(self, message: Any, data: Optional[Union[str, bytes]] = None) -> None:
         """
-        Broadcast a message to all control channels.
+        Broadcast a message to all control channels
         """
 
         raw_message = json.dumps(message)
@@ -1038,28 +1026,28 @@ class PortalService:
 
     def enumerate_tags(self, connection_id: int) -> List[str]:
         """
-        Enumerate tags of a specific connection.
+        Enumerate tags of a specific connection
         """
 
         return self._impl.enumerate_tags(connection_id)
 
     def tag(self, connection_id: int, tag: str) -> None:
         """
-        Tag a specific control channel.
+        Tag a specific control channel
         """
 
         self._impl.tag(connection_id, tag)
 
     def untag(self, connection_id: int, tag: str) -> None:
         """
-        Untag a specific control channel.
+        Untag a specific control channel
         """
 
         self._impl.untag(connection_id, tag)
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Add a signal handler.
+        Add a signal handler
         """
 
         if signal == "authenticated":
@@ -1071,7 +1059,7 @@ class PortalService:
 
     def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
-        Remove a signal handler.
+        Remove a signal handler
         """
 
         if signal == "authenticated":
@@ -1174,15 +1162,14 @@ class Cancellable:
     @property
     def is_cancelled(self) -> bool:
         """
-        Query whether cancellable has been cancelled.
+        Query whether cancellable has been cancelled
         """
 
         return self._impl.is_cancelled()
 
     def raise_if_cancelled(self) -> None:
         """
-        Raise an exception if cancelled.
-
+        Raise an exception if cancelled
         :raises OperationCancelledError:
         """
 
@@ -1194,7 +1181,7 @@ class Cancellable:
     @classmethod
     def get_current(cls) -> _frida.Cancellable:
         """
-        Get the top cancellable from the stack.
+        Get the top cancellable from the stack
         """
 
         return _Cancellable.get_current()
@@ -1212,8 +1199,7 @@ class Cancellable:
 
     def connect(self, callback: Callable[..., Any]) -> int:
         """
-        Register notification callback.
-
+        Register notification callback
         :returns: the created handler id
         """
 
@@ -1228,7 +1214,7 @@ class Cancellable:
 
     def cancel(self) -> None:
         """
-        Set cancellable to cancelled.
+        Set cancellable to cancelled
         """
 
         self._impl.cancel()

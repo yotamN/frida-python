@@ -44,7 +44,7 @@ OperationCancelledError = _frida.OperationCancelledError
 
 def query_system_parameters() -> Dict[str, Any]:
     """
-    Returns a dictionary of information about the host system.
+    Returns a dictionary of information about the host system
     """
 
     return get_local_device().query_system_parameters()
@@ -60,7 +60,7 @@ def spawn(
     **kwargs,
 ) -> int:
     """
-    Spawn a process into an attachable state.
+    Spawn a process into an attachable state
     """
 
     return get_local_device().spawn(program=program, argv=argv, envp=envp, env=env, cwd=cwd, stdio=stdio, **kwargs)
@@ -68,9 +68,8 @@ def spawn(
 
 def resume(target: core.ProcessTarget) -> None:
     """
-    Resume a process from the attachable state.
-
-    :params target: the PID or name of the process
+    Resume a process from the attachable state
+    :param target: the PID or name of the process
     """
 
     get_local_device().resume(target)
@@ -78,9 +77,8 @@ def resume(target: core.ProcessTarget) -> None:
 
 def kill(target: core.ProcessTarget) -> None:
     """
-    Kill a process.
-
-    :params target: the PID or name of the process
+    Kill a process
+    :param target: the PID or name of the process
     """
 
     get_local_device().kill(target)
@@ -90,9 +88,8 @@ def attach(
     target: core.ProcessTarget, realm: Optional[str] = None, persist_timeout: Optional[int] = None
 ) -> core.Session:
     """
-    Attach to a process.
-
-    :params target: the PID or name of the process
+    Attach to a process
+    :param target: the PID or name of the process
     """
 
     return get_local_device().attach(target, realm=realm, persist_timeout=persist_timeout)
@@ -101,8 +98,7 @@ def attach(
 def inject_library_file(target: core.ProcessTarget, path: str, entrypoint: str, data: str) -> int:
     """
     Inject a library file to a process.
-
-    :params target: the PID or name of the process
+    :param target: the PID or name of the process
     """
 
     return get_local_device().inject_library_file(target, path, entrypoint, data)
@@ -110,9 +106,8 @@ def inject_library_file(target: core.ProcessTarget, path: str, entrypoint: str, 
 
 def inject_library_blob(target: core.ProcessTarget, blob: bytes, entrypoint: str, data: str) -> int:
     """
-    Inject a library blob to a process.
-
-    :params target: the PID or name of the process
+    Inject a library blob to a process
+    :param target: the PID or name of the process
     """
 
     return get_local_device().inject_library_blob(target, blob, entrypoint, data)
@@ -153,9 +148,8 @@ def get_device(id: Optional[str], timeout: int = 0) -> core.Device:
 def get_device_matching(predicate: Callable[[core.Device], bool], timeout: int = 0) -> core.Device:
     """
     Get device matching predicate.
-
-    :params predicate: a function to filter the devices
-    :params timeout: operation timeout in seconds
+    :param predicate: a function to filter the devices
+    :param timeout: operation timeout in seconds
     """
 
     return get_device_manager().get_device_matching(predicate, timeout)
@@ -172,7 +166,7 @@ def enumerate_devices() -> List[core.Device]:
 @core.cancellable
 def shutdown() -> None:
     """
-    Shutdown the main device manager.
+    Shutdown the main device manager
     """
 
     get_device_manager()._impl.close()
