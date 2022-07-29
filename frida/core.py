@@ -569,12 +569,6 @@ class Device:
     Represents a device that Frida connects to
     """
 
-    id: Optional[str]
-    name: Optional[str]
-    icon: Optional[Any]
-    type: Optional[str]
-    bus: Optional[Bus]
-
     def __init__(self, device: _frida.Device) -> None:
         self.id = device.id
         self.name = device.name
@@ -789,7 +783,7 @@ class Device:
         Get the message bus of the device
         """
 
-        return Bus(self._impl.get_bus())
+        return self.bus
 
     def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
