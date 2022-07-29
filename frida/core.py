@@ -1,11 +1,11 @@
 import fnmatch
 import functools
 import json
-import numbers
 import sys
 import threading
 import traceback
-from typing import Any, Callable, Dict, List, Optional, Sequence, SupportsFloat, Tuple, Union, TypeVar, Type
+from types import TracebackType
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 import _frida
 
@@ -13,13 +13,12 @@ _device_manager = None
 
 _Cancellable = _frida.Cancellable
 
-# Mypy doesn't know that int and float inherit from numbers.Number so instead we need to have this hack
-ProcessTarget = Union[Type[SupportsFloat], Type[complex], Type[numbers.Number], str]
+ProcessTarget = Union[int, str]
 
 
-def get_device_manager() -> 'DeviceManager':
+def get_device_manager() -> "DeviceManager":
     """
-    Get or create a singelton DeviceManager that let you manage all the devices
+    Get or create a singleton DeviceManager that let you manage all the devices
     """
 
     global _device_manager
@@ -149,7 +148,7 @@ class ScriptExports:
 class Script:
     exports: ScriptExports
 
-    def __init__(self, impl: _frida.Script):
+    def __init__(self, impl: _frida.Script) -> None:
         self.exports = ScriptExports(self)
 
         self._impl = impl
@@ -316,7 +315,7 @@ class Script:
 
         return result[1]
 
-    def _on_rpc_message(self, request_id, operation, params, data) -> None:
+    def _on_rpc_message(self, request_id:int, operation:str, params, data) -> None:
         if operation in ("ok", "error"):
             callback = self._pending.pop(request_id, None)
             if callback is None:
@@ -345,7 +344,7 @@ class Script:
 
             next_pending(None, _frida.InvalidOperationError("script has been destroyed"))
 
-    def _on_message(self, raw_message, data) -> None:
+    def _on_message(self, raw_message: str, data: Any) -> None:
         message = json.loads(raw_message)
 
         mtype = message["type"]
@@ -451,7 +450,27 @@ class Session:
         return self._impl.snapshot_script(*args, **kwargs)
 
     @cancellable
-    def setup_peer_connection(self, stun_server, relays: Sequence[_frida.Relay]) -> None:
+    def enable_debugger(self, port: int) -> None:
+        """
+        Enable the Node.js compatible script debugger.
+        """
+
+        kwargs = {"port": port}
+        _filter_missing_kwargs(kwargs)
+        self._impl.enable_debugger(**kwargs)
+
+    @cancellable
+    def disable_debugger(self) -> None:
+        """
+        Disable the Node.js compatible script debugger.
+        """
+
+        self._impl.disable_debugger()
+
+    @cancellable
+    def setup_peer_connection(
+        self, stun_server: Optional[str] = None, relays: Optional[Sequence[_frida.Relay]] = None
+    ) -> None:
         """
         Set up a peer connection with the target process.
         """
@@ -476,14 +495,14 @@ class Session:
         _filter_missing_kwargs(kwargs)
         return PortalMembership(self._impl.join_portal(address, **kwargs))
 
-    def on(self, signal: str, callback: Callable) -> None:
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Add a signal handler.
         """
 
         self._impl.on(signal, callback)
 
-    def off(self, signal: str, callback: Callable) -> None:
+    def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Remove a signal handler.
         """
@@ -494,7 +513,7 @@ class Session:
 class Bus:
     def __init__(self, impl: _frida.Bus) -> None:
         self._impl = impl
-        self._on_message_callbacks: List[Callable] = []
+        self._on_message_callbacks: List[Callable[..., Any]] = []
 
         impl.on("message", self._on_message)
 
@@ -516,7 +535,7 @@ class Bus:
         _filter_missing_kwargs(kwargs)
         self._impl.post(raw_message, **kwargs)
 
-    def on(self, signal: str, callback: Callable) -> None:
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Add a signal handler.
         """
@@ -526,7 +545,7 @@ class Bus:
         else:
             self._impl.on(signal, callback)
 
-    def off(self, signal: str, callback: Callable) -> None:
+    def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Remove a signal handler.
         """
@@ -536,7 +555,7 @@ class Bus:
         else:
             self._impl.off(signal, callback)
 
-    def _on_message(self, raw_message, data) -> None:
+    def _on_message(self, raw_message: str, data: Any) -> None:
         message = json.loads(raw_message)
 
         for callback in self._on_message_callbacks[:]:
@@ -676,8 +695,8 @@ class Device:
     @cancellable
     def spawn(
         self,
-        program: Union[str, List, Tuple],
-        argv: Optional[Union[List, Tuple]] = None,
+        program: Union[str, List[Union[str, bytes]], Tuple[Union[str, bytes]]],
+        argv: Union[None, List[Union[str, bytes]], Tuple[Union[str, bytes]]] = None,
         envp: Optional[Dict[str, str]] = None,
         env: Optional[Dict[str, str]] = None,
         cwd: Optional[str] = None,
@@ -781,25 +800,25 @@ class Device:
 
         return Bus(self._impl.get_bus())
 
-    def on(self, signal: str, callback: Callable) -> None:
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Add a signal handler.
         """
 
         self._impl.on(signal, callback)
 
-    def off(self, signal: str, callback: Callable) -> None:
+    def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Remove a signal handler.
         """
 
         self._impl.off(signal, callback)
 
-    def _pid_of(self, target: ProcessTarget) -> numbers.Number:
-        if isinstance(target, numbers.Number):
-            return target
-        else:
+    def _pid_of(self, target: ProcessTarget) -> int:
+        if isinstance(target, str):
             return self.get_process(target).pid
+        else:
+            return target
 
 
 class DeviceManager:
@@ -960,8 +979,8 @@ class PortalService:
 
         self.device = impl.device
         self._impl = impl
-        self._on_authenticated_callbacks: List[Callable] = []
-        self._on_message_callbacks: List[Callable] = []
+        self._on_authenticated_callbacks: List[Callable[[int, Dict[str, Any]], Any]] = []
+        self._on_message_callbacks: List[Callable[[int, Dict[str, Any], Any], Any]] = []
 
         impl.on("authenticated", self._on_authenticated)
         impl.on("message", self._on_message)
@@ -1038,7 +1057,7 @@ class PortalService:
 
         self._impl.untag(connection_id, tag)
 
-    def on(self, signal: str, callback: Callable) -> None:
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Add a signal handler.
         """
@@ -1089,26 +1108,38 @@ class Compiler:
         return repr(self._impl)
 
     @cancellable
-    def build(self, *args, **kwargs):
-        return self._impl.build(*args, **kwargs)
+    def build(
+        self,
+        entrypoint: str,
+        project_root: Optional[str] = None,
+        source_maps: Optional[str] = None,
+        compression: Optional[str] = None,
+    ) -> str:
+        return self._impl.build(entrypoint, project_root, source_maps, compression)
 
     @cancellable
-    def watch(self, *args, **kwargs):
-        return self._impl.watch(*args, **kwargs)
+    def watch(
+        self,
+        entrypoint: str,
+        project_root: Optional[str] = None,
+        source_maps: Optional[str] = None,
+        compression: Optional[str] = None,
+    ) -> None:
+        return self._impl.watch(entrypoint, project_root, source_maps, compression)
 
-    def on(self, signal, callback) -> None:
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         self._impl.on(signal, callback)
 
-    def off(self, signal, callback) -> None:
+    def off(self, signal: str, callback: Callable[..., Any]) -> None:
         self._impl.off(signal, callback)
 
 
 class CancellablePollFD:
-    def __init__(self, cancellable):
+    def __init__(self, cancellable: _Cancellable) -> None:
         self.handle = cancellable.get_fd()
-        self._cancellable = cancellable
+        self._cancellable: Optional[_Cancellable] = cancellable
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.release()
 
     def release(self) -> None:
@@ -1124,7 +1155,12 @@ class CancellablePollFD:
     def __enter__(self) -> int:
         return self.handle
 
-    def __exit__(self, *args) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        trace: Optional[TracebackType],
+    ) -> None:
         self.release()
 
 
@@ -1166,10 +1202,15 @@ class Cancellable:
     def __enter__(self) -> None:
         self._impl.push_current()
 
-    def __exit__(self, *args) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        trace: Optional[TracebackType],
+    ) -> None:
         self._impl.pop_current()
 
-    def connect(self, callback: Callable) -> int:
+    def connect(self, callback: Callable[..., Any]) -> int:
         """
         Register notification callback.
 
@@ -1193,12 +1234,12 @@ class Cancellable:
         self._impl.cancel()
 
 
-def make_auth_callback(callback: Callable) -> Callable[[Any], str]:
+def make_auth_callback(callback: Callable[[str], Any]) -> Callable[[Any], str]:
     """
     Wraps authenticated callbacks with JSON marshaling
     """
 
-    def authenticate(token) -> str:
+    def authenticate(token: str) -> str:
         session_info = callback(token)
         return json.dumps(session_info)
 

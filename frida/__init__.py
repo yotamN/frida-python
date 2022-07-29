@@ -51,8 +51,8 @@ def query_system_parameters() -> Dict[str, Any]:
 
 
 def spawn(
-    program: Union[str, List, Tuple],
-    argv: Optional[Union[List, Tuple]] = None,
+    program: Union[str, List[Union[str, bytes]], Tuple[Union[str, bytes]]],
+    argv: Union[None, List[Union[str, bytes]], Tuple[Union[str, bytes]]] = None,
     envp: Optional[Dict[str, str]] = None,
     env: Optional[Dict[str, str]] = None,
     cwd: Optional[str] = None,
