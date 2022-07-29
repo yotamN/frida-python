@@ -277,7 +277,7 @@ class Script:
     def _rpc_request(self, *args):
         result = [False, None, None]
 
-        def on_complete(value, error) -> None:
+        def on_complete(value: Any, error: Union[None, RPCException | _frida.InvalidOperationError]) -> None:
             with self._cond:
                 result[0] = True
                 result[1] = value

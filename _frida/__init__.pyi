@@ -17,20 +17,19 @@ class OperationCancelledError(Exception): ...
 class PermissionDeniedError(Exception): ...
 
 class Object:
-    def __init__(self, *args, **kwargs) -> None: ...
-    def on(self, signal: str, callback: Callable[..., Any]):
+    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
+    def on(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Add a signal handler.
         """
         ...
-    def off(self, signal: str, callback: Callable[..., Any]):
+    def off(self, signal: str, callback: Callable[..., Any]) -> None:
         """
         Remove a signal handler.
         """
         ...
 
 class Application(Object):
-    def __init__(self, *args, **kwargs) -> None: ...
     @property
     def identifier(self) -> str:
         """
@@ -57,29 +56,29 @@ class Application(Object):
         ...
 
 class Bus(Object):
-    def attach(self):
+    def attach(self) -> None:
         """
         Attach to the bus.
         """
         ...
-    def post(self, message: str, data: Optional[Union[bytes, str]]) -> Any:
+    def post(self, message: str, data: Optional[Union[bytes, str]]) -> None:
         """
         Post a JSON-encoded message to the bus.
         """
         ...
 
 class Cancellable(Object):
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Set cancellable to cancelled.
         """
         ...
-    def connect(self, callback: Callable) -> int:
+    def connect(self, callback: Callable[..., Any]) -> int:
         """
         Register notification callback.
         """
         ...
-    def disconnect(self, handler_id: int):
+    def disconnect(self, handler_id: int) -> None:
         """
         Unregister notification callback.
         """
@@ -100,22 +99,22 @@ class Cancellable(Object):
         Query whether cancellable has been cancelled.
         """
         ...
-    def pop_current(self):
+    def pop_current(self) -> None:
         """
         Pop cancellable off the cancellable stack.
         """
         ...
-    def push_current(self):
+    def push_current(self) -> None:
         """
         Push cancellable onto the cancellable stack.
         """
         ...
-    def raise_if_cancelled(self):
+    def raise_if_cancelled(self) -> None:
         """
         Raise an exception if cancelled.
         """
         ...
-    def release_fd(self):
+    def release_fd(self) -> None:
         """
         Release a resource previously allocated by get_fd().
         """
@@ -233,17 +232,19 @@ class Device(Object):
         Attach to a PID.
         """
         ...
-    def disable_spawn_gating(self):
+    def disable_spawn_gating(self) -> None:
         """
         Disable spawn gating.
         """
         ...
-    def enable_spawn_gating(self):
+    def enable_spawn_gating(self) -> None:
         """
         Enable spawn gating.
         """
         ...
-    def enumerate_applications(self, identifiers: Optional[Sequence[str]] = None, scope: Optional[str] = None) -> Any:
+    def enumerate_applications(
+        self, identifiers: Optional[Sequence[str]] = None, scope: Optional[str] = None
+    ) -> List[Application]:
         """
         Enumerate applications.
         """
@@ -258,7 +259,7 @@ class Device(Object):
         Enumerate pending spawn.
         """
         ...
-    def enumerate_processes(self, pids: Optional[Sequence[int]] = None, scope: Optional[str] = None) -> Any:
+    def enumerate_processes(self, pids: Optional[Sequence[int]] = None, scope: Optional[str] = None) -> List[Process]:
         """
         Enumerate processes.
         """
@@ -278,7 +279,7 @@ class Device(Object):
         Inject a library file to a PID.
         """
         ...
-    def input(self, pid: int, data: bytes):
+    def input(self, pid: int, data: bytes) -> None:
         """
         Input data on stdin of a spawned process.
         """
@@ -288,7 +289,7 @@ class Device(Object):
         Query whether the device has been lost.
         """
         ...
-    def kill(self, pid: int):
+    def kill(self, pid: int) -> None:
         """
         Kill a PID.
         """
@@ -303,7 +304,7 @@ class Device(Object):
         Returns a dictionary of information about the host system.
         """
         ...
-    def resume(self, pid: int):
+    def resume(self, pid: int) -> None:
         """
         Resume a process from the attachable state.
         """
@@ -311,12 +312,12 @@ class Device(Object):
     def spawn(
         self,
         program: str,
-        argv: Optional[Union[List[Union[str, bytes]], Tuple[Union[str, bytes]]]] = None,
+        argv: Union[None, List[Union[str, bytes]], Tuple[Union[str, bytes]]] = None,
         envp: Optional[Dict[str, str]] = None,
         env: Optional[Dict[str, str]] = None,
         cwd: Optional[str] = None,
         stdio: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> int:
         """
         Spawn a process into an attachable state.
@@ -336,7 +337,7 @@ class DeviceManager(Object):
         Add a remote device.
         """
         ...
-    def close(self):
+    def close(self) -> None:
         """
         Close the device manager.
         """
@@ -351,7 +352,7 @@ class DeviceManager(Object):
         Get device matching predicate.
         """
         ...
-    def remove_remote_device(self, address: str):
+    def remove_remote_device(self, address: str) -> None:
         """
         Remove a remote device.
         """
@@ -360,19 +361,19 @@ class DeviceManager(Object):
 class EndpointParameters(Object): ...
 
 class FileMonitor(Object):
-    def disable(self):
+    def disable(self) -> None:
         """
         Disable the file monitor.
         """
         ...
-    def enable(self):
+    def enable(self) -> None:
         """
         Enable the file monitor.
         """
         ...
 
 class IOStream(Object):
-    def close(self):
+    def close(self) -> None:
         """
         Close the stream.
         """
@@ -397,14 +398,14 @@ class IOStream(Object):
         Write as much as possible of the provided data to the stream.
         """
         ...
-    def write_all(self, data: bytes):
+    def write_all(self, data: bytes) -> None:
         """
         Write all of the provided data to the stream.
         """
         ...
 
 class PortalMembership(Object):
-    def terminate(self):
+    def terminate(self) -> None:
         """
         Terminate the membership.
         """
@@ -417,7 +418,7 @@ class PortalService(Object):
         Device for in-process control.
         """
         ...
-    def broadcast(self, message: str, data: Optional[Union[str, bytes]] = None):
+    def broadcast(self, message: str, data: Optional[Union[str, bytes]] = None) -> None:
         """
         Broadcast a message to all control channels.
         """
@@ -427,37 +428,37 @@ class PortalService(Object):
         Enumerate tags of a specific connection.
         """
         ...
-    def kick(self, connection_id: int):
+    def kick(self, connection_id: int) -> None:
         """
         Kick out a specific connection.
         """
         ...
-    def narrowcast(self, tag: str, message: str, data: Optional[Union[str, bytes]] = None):
+    def narrowcast(self, tag: str, message: str, data: Optional[Union[str, bytes]] = None) -> None:
         """
         Post a message to control channels with a specific tag.
         """
         ...
-    def post(self, connection_id: int, message: str, data: Optional[Union[str, bytes]] = None):
+    def post(self, connection_id: int, message: str, data: Optional[Union[str, bytes]] = None) -> None:
         """
         Post a message to a specific control channel.
         """
         ...
-    def start(self):
+    def start(self) -> None:
         """
         Start listening for incoming connections.
         """
         ...
-    def stop(self):
+    def stop(self) -> None:
         """
         Stop listening for incoming connections, and kick any connected clients.
         """
         ...
-    def tag(self, connection_id: int, tag: str):
+    def tag(self, connection_id: int, tag: str) -> None:
         """
         Tag a specific control channel.
         """
         ...
-    def untag(self, connection_id: int, tag: str):
+    def untag(self, connection_id: int, tag: str) -> None:
         """
         Untag a specific control channel.
         """
@@ -484,7 +485,7 @@ class Process(Object):
         ...
 
 class Relay(Object):
-    def __init__(self, address: str, username: str, password: str, kind: str): ...
+    def __init__(self, address: str, username: str, password: str, kind: str) -> None: ...
     @property
     def address(self) -> str:
         """
@@ -511,7 +512,7 @@ class Relay(Object):
         ...
 
 class Script(Object):
-    def eternalize(self):
+    def eternalize(self) -> None:
         """
         Eternalize the script.
         """
@@ -521,17 +522,17 @@ class Script(Object):
         Query whether the script has been destroyed.
         """
         ...
-    def load(self):
+    def load(self) -> None:
         """
         Load the script.
         """
         ...
-    def post(self, message: str, data: Optional[Union[str, bytes]] = None) -> Any:
+    def post(self, message: str, data: Optional[Union[str, bytes]] = None) -> None:
         """
         Post a JSON-encoded message to the script.
         """
         ...
-    def unload(self):
+    def unload(self) -> None:
         """
         Unload the script.
         """
@@ -561,27 +562,27 @@ class Session(Object):
         Create a new script from bytecode.
         """
         ...
-    def detach(self):
+    def detach(self) -> None:
         """
         Detach session from the process.
         """
         ...
-    def disable_child_gating(self):
+    def disable_child_gating(self) -> None:
         """
         Disable child gating.
         """
         ...
-    def disable_debugger(self):
+    def disable_debugger(self) -> None:
         """
         Disable the Node.js compatible script debugger.
         """
         ...
-    def enable_child_gating(self):
+    def enable_child_gating(self) -> None:
         """
         Enable child gating.
         """
         ...
-    def enable_debugger(self, port: Optional[int] = None):
+    def enable_debugger(self, port: Optional[int] = None) -> None:
         """
         Enable the Node.js compatible script debugger.
         """
@@ -598,19 +599,20 @@ class Session(Object):
         Join a portal.
         """
         ...
-    def resume(self):
+    def resume(self) -> None:
         """
         Resume session after network error.
         """
         ...
-    def setup_peer_connection(self, stun_server: Optional[str] = None, relays: Optional[Sequence[Relay]] = None) -> Any:
+    def setup_peer_connection(
+        self, stun_server: Optional[str] = None, relays: Optional[Sequence[Relay]] = None
+    ) -> None:
         """
         Set up a peer connection with the target process.
         """
         ...
 
 class Spawn(Object):
-    def __init__(self, *args, **kwargs) -> None: ...
     @property
     def identifier(self) -> str:
         """
@@ -621,6 +623,30 @@ class Spawn(Object):
     def pid(self) -> int:
         """
         Process ID.
+        """
+        ...
+
+class Compiler(Object):
+    def build(
+        self,
+        entrypoint: str,
+        project_root: Optional[str] = None,
+        source_maps: Optional[str] = None,
+        compression: Optional[str] = None,
+    ) -> str:
+        """
+        Build an agent.
+        """
+        ...
+    def watch(
+        self,
+        entrypoint: str,
+        project_root: Optional[str] = None,
+        source_maps: Optional[str] = None,
+        compression: Optional[str] = None,
+    ) -> None:
+        """
+        Continuously build an agent.
         """
         ...
 
