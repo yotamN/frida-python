@@ -146,7 +146,6 @@ class ScriptExports:
 
 
 class Script:
-    exports: ScriptExports
 
     def __init__(self, impl: _frida.Script) -> None:
         self.exports = ScriptExports(self)
